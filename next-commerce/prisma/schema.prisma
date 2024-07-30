@@ -17,7 +17,7 @@ datasource db {
 model User {
   id Int @id @default(autoincrement())
   externalId String @unique
-  atributes Json
+  attributes Json
   createAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
