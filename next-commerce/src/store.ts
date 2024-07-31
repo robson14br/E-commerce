@@ -1,13 +1,18 @@
-import { create } from "zustand";
-import { persist } from "zustand/middleware";
-import { ProductType } from "@/types/ProductType";
+import { create } from 'zustand';
+import { persist } from 'zustand/middleware';
+import { ProductType } from '@/types/ProductType';
 
 type CartState = {
   cart: ProductType[];
   addProduct: (product: ProductType) => void;
-  //removeProduct: (productId: string) => void;
+  removeProduct: (product: ProductType) => void;
   isOpen: boolean;
   toggleCart: () => void;
+  clearCart: () => void;
+  onCheckout: string;
+  setCheckout: (checkout: string) => void;
+  paymentIntent: string;
+  setPaymentIntent: (paymentIntent: string) => void;
 };
 
 export const useCartStore = create<CartState>()(
@@ -30,9 +35,31 @@ export const useCartStore = create<CartState>()(
             return { cart: [...state.cart, { ...item, quantity: 1 }] };
           }
         }),
-     isOpen: false,
-     toggleCart: () => set((state) => ({ isOpen: !state.isOpen })),
-   }),
-    { name: "cart-storage" }
+      removeProduct: (item) =>
+        set((state) => {
+          const existingProduct = state.cart.find((p) => p.id === item.id);
+
+          if (existingProduct && existingProduct.quantity! > 1) {
+            const updatedCart = state.cart.map((p) => {
+              if (p.id === item.id) {
+                return { ...p, quantity: p.quantity! - 1 };
+              }
+              return p;
+            });
+            return { cart: updatedCart };
+          } else {
+            const filterdCart = state.cart.filter((p) => p.id !== item.id);
+            return { cart: filterdCart };
+          }
+        }),
+      isOpen: false,
+      toggleCart: () => set((state) => ({ isOpen: !state.isOpen })),
+      onCheckout: 'cart',
+      setCheckout: (checkout) => set(() => ({ onCheckout: checkout })),
+      paymentIntent: '',
+      setPaymentIntent: (paymentIntent) => set(() => ({ paymentIntent })),
+      clearCart: () => set(() => ({ cart: [] })),
+    }),
+    { name: 'cart-storage' }
   )
 );
