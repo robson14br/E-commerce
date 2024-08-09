@@ -2,8 +2,10 @@
 import { formatPrice } from "@/lib/utils";
 import { useCartStore } from "@/store";
 import Image from "next/image";
+import { motion } from "framer-motion";
 import CheckoutButton from "./CheckoutButton";
 import Checkout from "./Checkout";
+import OrderCompleted from "./OrderComplete";
 
 export default function CartDrawer() {
   const useStore = useCartStore();
@@ -12,7 +14,10 @@ export default function CartDrawer() {
     return acc + item.price! * item.quantity!;
   }, 0);
   return (
-    <div
+    <motion.div
+      initial={{opacity: 0}}
+      animate={{opacity: 1}}
+      exit={{opacity: 0}}
       onClick={() => useStore.toggleCart()}
       className="fixed w-full h-screen bg-black/25 left-0 top-0 z-50"
     >
@@ -31,7 +36,11 @@ export default function CartDrawer() {
         {useStore.onCheckout === "cart" && (
           <>
             {useStore.cart.map((item) => (
-              <div key={item.id} className="flex gap-4 py-4">
+              <motion.div 
+              initial={{scale: 1, rotateZ: 0, opacity: 0.75}}
+              animate={{scale: 0.5, rotateZ: -10, opacity: 0}}
+              exit={{scale: 0.5, rotateZ: -10, opacity: 0}}
+              key={item.id} className="flex gap-4 py-4">
                 <Image
                   src={item.image}
                   alt={item.name}
@@ -58,7 +67,7 @@ export default function CartDrawer() {
                     Remover
                   </button>
                 </div>
-              </div>
+              </motion.div>
             ))}
           </>
         )}
@@ -68,7 +77,8 @@ export default function CartDrawer() {
         )}
 
         {useStore.onCheckout === "checkout" && <Checkout />}
+        {useStore.onCheckout === "success" && <OrderCompleted />}
       </div>
-    </div>
+    </motion.div>
   );
 }
