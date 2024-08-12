@@ -9,8 +9,9 @@ type ProductProps = {
 }
 export default function Product({product} : ProductProps) {
     return (
+        <div className=" bg-slate-800 p-4 shadow-lg">
         <Link href={`/product/${product.id}`}>
-        <div className="flex flex-col shadow-lg h-80 bg-slate-800 p-4 text-gray-300" >
+        <div className="flex flex-col  h-80 text-gray-300" >
             <div className="relative max-h-72 flex-1">
                 <ProductImage product={product} fill />
             </div>
@@ -22,8 +23,9 @@ export default function Product({product} : ProductProps) {
                     {formatPrice(product.price)}
                 </p>
             </div>
-            <AddCart product = {product} />
         </div>
         </Link>
+            <AddCart product = {product} />
+        </div>
     )
 }
